@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import Optional
 
+# Import different types of chunkers
 from chunkers import (
     naive_chunk,
     sentence_chunk_nltk,
@@ -16,8 +17,11 @@ from chunkers import (
     SUPPORTED_LANGUAGES,
 )
 
+# Initialize FastAPI app
 app = FastAPI(title="Text Chunking Visualizer")
 
+# Add CORS middleware to allow requests from all origins
+# React runs on port 5173, so we need to allow requests from that port
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -25,6 +29,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Define the available chunking methods
 METHODS = {
     "naive",
     "sentence_nltk",
@@ -37,7 +42,8 @@ METHODS = {
     "code_langchain",
 }
 
-
+# Define the request model for chunking
+# FastAPI automatically validates the request data, 
 class ChunkRequest(BaseModel):
     text: str
     method: str = "naive"
@@ -47,7 +53,7 @@ class ChunkRequest(BaseModel):
     encoding_name: str = "cl100k_base"
     language: str = "python"
 
-
+# Define the response model for chunking
 class Chunk(BaseModel):
     text: str
     start: int
@@ -56,21 +62,24 @@ class Chunk(BaseModel):
     token_count: Optional[int] = None
     node_type: Optional[str] = None
 
-
+# Define the response model for chunking
 class ChunkResponse(BaseModel):
     chunks: list[Chunk]
 
-
+# Define the GET endpoint for listing the supported languages
 @app.get("/api/languages")
 def list_languages():
+    # Dictionary specified in code_langchain.py and exported in __init__.py
     return {"languages": sorted(SUPPORTED_LANGUAGES.keys())}
 
-
+# Define the POST endpoint for chunking text with pydantic ChunkResponse model enforced
 @app.post("/api/chunk", response_model=ChunkResponse)
 def chunk_text(req: ChunkRequest):
+    # Check if the method is supported
     if req.method not in METHODS:
         raise HTTPException(400, f"Unknown method: {req.method}")
 
+    # Calling the appropriate chunking function based on the method
     match req.method:
         case "naive":
             chunks = naive_chunk(req.text, req.chunk_size, req.overlap)

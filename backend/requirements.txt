@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic
+nltk
+spacy
+langchain-text-splitters
+llama-index-core
+tiktoken

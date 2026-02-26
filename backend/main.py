@@ -90,22 +90,14 @@ def chunk_text(req: ChunkRequest):
         case "paragraph":
             chunks = paragraph_chunk(req.text)
         case "recursive_langchain":
-            chunks = recursive_chunk(
-                req.text, req.chunk_size, req.overlap, req.separators
-            )
+            chunks = recursive_chunk(req.text, req.chunk_size, req.overlap, req.separators)
         case "llamaindex_sentence":
-            chunks = llamaindex_sentence_chunk(
-                req.text, req.chunk_size, req.overlap
-            )
+            chunks = llamaindex_sentence_chunk(req.text, req.chunk_size, req.overlap)
         case "tiktoken":
-            chunks = tiktoken_chunk(
-                req.text, req.chunk_size, req.overlap, req.encoding_name
-            )
+            chunks = tiktoken_chunk(req.text, req.chunk_size, req.overlap, req.encoding_name)
         case "ast_python":
             chunks = ast_chunk_python(req.text)
         case "code_langchain":
-            chunks = code_langchain_chunk(
-                req.text, req.language, req.chunk_size, req.overlap
-            )
+            chunks = code_langchain_chunk(req.text, req.language, req.chunk_size, req.overlap)
 
     return ChunkResponse(chunks=chunks)

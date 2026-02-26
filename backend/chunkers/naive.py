@@ -12,19 +12,24 @@ def naive_chunk(text: str, chunk_size: int = 200, overlap: int = 0) -> list[dict
         raise ValueError("overlap must be >= 0 and < chunk_size")
 
     chunks = []
+    # Calculate the step size
     step = chunk_size - overlap
     start = 0
     index = 0
 
     while start < len(text):
+        # At each start index, calculate what the end index should be
         end = min(start + chunk_size, len(text))
+        # Append text[start:end] to chunks
         chunks.append({
             "text": text[start:end],
             "start": start,
             "end": end,
             "index": index,
         })
+        # Increment the index
         index += 1
+        # Increment the start index by the step size
         start += step
 
     return chunks
